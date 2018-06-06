@@ -27,7 +27,7 @@ const getModal = function() {
 
   return modalDom;
 };
-// 存所有弹出层的实例id
+// 存所有弹出层的实例
 const instances = {};
 /**
  * 弹出层管理Object
@@ -57,7 +57,7 @@ const PopupManager = {
   nextZIndex: function() {
     return PopupManager.zIndex++;
   },
-  // 存放模态窗
+  // 存放模态窗对应id
   modalStack: [],
 
   doOnModalClick: function() {
@@ -72,21 +72,24 @@ const PopupManager = {
   },
 
   openModal: function(id, zIndex, dom, modalClass, modalFade) {
+    console.log('openModal');
     if (Vue.prototype.$isServer) return;
     if (!id || zIndex === undefined) return;
     this.modalFade = modalFade;
 
     const modalStack = this.modalStack;
 
+    // 如果这个dialog已经存在了，那么直接return
     for (let i = 0, j = modalStack.length; i < j; i++) {
       const item = modalStack[i];
       if (item.id === id) {
         return;
       }
     }
-
+    console.log('modalStack', modalStack);
     const modalDom = getModal();
-
+    // 获取遮罩层的dom与遮罩层样式的处理
+    console.log('modalDom', modalDom);
     addClass(modalDom, 'v-modal');
     if (this.modalFade && !hasModal) {
       addClass(modalDom, 'v-modal-enter');
@@ -98,7 +101,7 @@ const PopupManager = {
     setTimeout(() => {
       removeClass(modalDom, 'v-modal-enter');
     }, 200);
-
+    // 遮罩层的位置
     if (dom && dom.parentNode && dom.parentNode.nodeType !== 11) {
       dom.parentNode.appendChild(modalDom);
     } else {
@@ -119,6 +122,11 @@ const PopupManager = {
     const modalDom = getModal();
 
     if (modalStack.length > 0) {
+      /**
+       * 如果现在Dialog不止一个，那么取堆顶的一个dialog，如果恰好这个就是关闭的，那么就从堆里面去除这个dialog
+       * 否则就用splice陆续剔除外层dialog 直到对应的id为止
+       * modalStack为空，都不存在，则关闭遮罩
+       */
       const topItem = modalStack[modalStack.length - 1];
       if (topItem.id === id) {
         if (topItem.modalClass) {
@@ -180,7 +188,9 @@ const getTopPopup = function() {
     return instance;
   }
 };
-
+/**
+ * 回车时关闭最顶层dialog
+ */
 if (!Vue.prototype.$isServer) {
   // handle `esc` key when the popup is shown
   window.addEventListener('keydown', function(event) {

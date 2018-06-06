@@ -109,6 +109,7 @@
       visible(val) {
         if (val) {
           this.closed = false;
+          // 触发dialog打开的事件
           this.$emit('open');
           this.$el.addEventListener('scroll', this.updatePopper);
           this.$nextTick(() => {
@@ -145,25 +146,32 @@
           }
         };
       },
+      // 点击遮罩层关闭弹窗
       handleWrapperClick() {
         if (!this.closeOnClickModal) return;
         this.handleClose();
       },
       handleClose() {
+        // 如果props传了beforeClose的函数，就执行callback，并把hide函数传出去
         if (typeof this.beforeClose === 'function') {
           this.beforeClose(this.hide);
         } else {
           this.hide();
         }
       },
+      // 关闭
       hide(cancel) {
         if (cancel !== false) {
           this.$emit('update:visible', false);
+  
+          // 触发dialog关闭的回调
           this.$emit('close');
           this.closed = true;
         }
       },
       updatePopper() {
+        console.log('updatePopper');
+        // 触发对应组件的事件   updatePopper为封装的popper.js 这一步的目的是为了提高对应组件的层级,防止对应的组件被弹窗遮盖
         this.broadcast('ElSelectDropdown', 'updatePopper');
         this.broadcast('ElDropdownMenu', 'updatePopper');
       }
@@ -173,7 +181,9 @@
       if (this.visible) {
         this.rendered = true;
         this.open();
+        console.log('this.appendToBody', this.appendToBody);
         if (this.appendToBody) {
+          // 添加弹窗到body
           document.body.appendChild(this.$el);
         }
       }

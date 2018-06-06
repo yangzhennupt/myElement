@@ -40,13 +40,14 @@ const webpackConfig = {
     filename: '[name].[hash:7].js',
     chunkFilename: isProd ? '[name].[hash:7].js' : '[name].js'
   },
+  devtool: 'eval-source-map',
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: config.alias,
     modules: ['node_modules']
   },
   devServer: {
-    host: '0.0.0.0',
+    host: 'localhost',
     port: 8085,
     publicPath: '/',
     noInfo: true

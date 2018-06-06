@@ -27,6 +27,7 @@ export default {
     openDelay: {},
     closeDelay: {},
     zIndex: {},
+    // 遮罩层
     modal: {
       type: Boolean,
       default: false
@@ -55,11 +56,13 @@ export default {
   },
 
   beforeMount() {
+    // 挂载前设置对应instanceId并注册
     this._popupId = 'popup-' + idSeed++;
     PopupManager.register(this._popupId, this);
   },
 
   beforeDestroy() {
+    // 组件销毁前 销毁对应实例，并关闭对应弹窗
     PopupManager.deregister(this._popupId);
     PopupManager.closeModal(this._popupId);
 
@@ -82,6 +85,11 @@ export default {
         if (this._opening) return;
         if (!this.rendered) {
           this.rendered = true;
+          /**
+           * 首次渲染时
+           * 下个事件循环开始的时候执行渲染打开操作
+           * 防止在这个circle里面做了什么对弹出层打开有影响的事情
+           */
           Vue.nextTick(() => {
             this.open();
           });
@@ -95,6 +103,7 @@ export default {
   },
 
   methods: {
+    // 合并props，重置相关的定时器
     open(options) {
       if (!this.rendered) {
         this.rendered = true;
@@ -125,16 +134,17 @@ export default {
       if (this.opened) return;
 
       this._opening = true;
-
+      // dialog内容dom
       const dom = getDOM(this.$el);
-
+      console.log('dom', dom);
       const modal = props.modal;
 
       const zIndex = props.zIndex;
       if (zIndex) {
         PopupManager.zIndex = zIndex;
       }
-
+      console.log(modal);
+      // 对于遮罩的处理
       if (modal) {
         if (this._closing) {
           PopupManager.closeModal(this._popupId);
@@ -163,7 +173,6 @@ export default {
 
       dom.style.zIndex = PopupManager.nextZIndex();
       this.opened = true;
-
       this.onOpen && this.onOpen();
 
       this.doAfterOpen();
