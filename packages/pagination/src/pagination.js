@@ -20,6 +20,8 @@ export default {
 
     pageCount: Number,
 
+    // 页码按钮的数量，必需是奇数
+
     pagerCount: {
       type: Number,
       validator(value) {
@@ -80,6 +82,7 @@ export default {
       slot: <my-slot></my-slot>,
       total: <total></total>
     };
+    // 对传入的组件布局进行遍历
     const components = layout.split(',').map((item) => item.trim());
     const rightWrapper = <div class="el-pagination__rightwrapper"></div>;
     let haveRightWrapper = false;
