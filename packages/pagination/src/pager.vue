@@ -89,7 +89,7 @@
           this.$emit('change', newPage);
         }
       },
-
+      // ...转换成->样式
       onMouseenter(direction) {
         if (this.disabled) return;
         if (direction === 'left') {
@@ -102,6 +102,7 @@
 
     computed: {
       pagers() {
+        // 显示的页码按钮数量，必需是奇数
         const pagerCount = this.pagerCount;
         const halfPagerCount = (pagerCount - 1) / 2;
 
@@ -110,7 +111,7 @@
 
         let showPrevMore = false;
         let showNextMore = false;
-
+        // 如果总页数大于页码按钮数，且当前页大于页码数量减去本身的一半，说明有隐藏的分页，显示相应的按钮
         if (pageCount > pagerCount) {
           if (currentPage > pagerCount - halfPagerCount) {
             showPrevMore = true;
@@ -120,9 +121,9 @@
             showNextMore = true;
           }
         }
-
+        // 这边的array即当前组件中展示的页码
         const array = [];
-
+        // 如果只有前面有隐藏
         if (showPrevMore && !showNextMore) {
           const startPage = pageCount - (pagerCount - 2);
           for (let i = startPage; i < pageCount; i++) {
@@ -138,6 +139,7 @@
             array.push(i);
           }
         } else {
+          // 从2开始是因为第一页，最后一页已经渲染
           for (let i = 2; i < pageCount; i++) {
             array.push(i);
           }
@@ -145,7 +147,6 @@
 
         this.showPrevMore = showPrevMore;
         this.showNextMore = showNextMore;
-
         return array;
       }
     },

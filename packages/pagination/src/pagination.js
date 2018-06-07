@@ -95,6 +95,8 @@ export default {
         return;
       }
 
+      // 在'->'之后的组件都会渲染在right-wrap容器里面，偏右显示
+
       if (!haveRightWrapper) {
         template.children.push(TEMPLATE_MAP[compo]);
       } else {
@@ -105,7 +107,7 @@ export default {
     if (haveRightWrapper) {
       template.children.unshift(rightWrapper);
     }
-
+    console.log('template', template);
     return template;
   },
 
@@ -139,6 +141,7 @@ export default {
 
     Next: {
       render(h) {
+        console.log(this.$parent);
         return (
           <button
             type="button"
@@ -168,6 +171,7 @@ export default {
           handler(newVal, oldVal) {
             if (valueEquals(newVal, oldVal)) return;
             if (Array.isArray(newVal)) {
+              // 传入的pageSize是否已存在，不存在取默认第一个
               this.$parent.internalPageSize = newVal.indexOf(this.$parent.pageSize) > -1
                 ? this.$parent.pageSize
                 : this.pageSizes[0];
@@ -328,34 +332,40 @@ export default {
       this.$emit('next-click', this.internalCurrentPage);
       this.emitChange();
     },
-
+    /**
+     *
+     * @param {*} value
+     * 获取正确的当前页码
+     */
     getValidCurrentPage(value) {
       value = parseInt(value, 10);
 
       const havePageCount = typeof this.internalPageCount === 'number';
 
       let resetValue;
+      // 没有 pageCount且vule为非数字，或小于1， 返回1
       if (!havePageCount) {
         if (isNaN(value) || value < 1) resetValue = 1;
       } else {
+        // 有pagecount 但小于1大于最大的pageCount 做处理
         if (value < 1) {
           resetValue = 1;
         } else if (value > this.internalPageCount) {
           resetValue = this.internalPageCount;
         }
       }
-
       if (resetValue === undefined && isNaN(value)) {
         resetValue = 1;
       } else if (resetValue === 0) {
         resetValue = 1;
       }
-
+      // resetValue没有赋值则该page合法
       return resetValue === undefined ? value : resetValue;
     },
 
     emitChange() {
       this.$nextTick(() => {
+        // 当前页点击不等于上次点击页码或者用户改变了pageSize 就触发current-change时间了
         if (this.internalCurrentPage !== this.lastEmittedPage || this.userChangePageSize) {
           this.$emit('current-change', this.internalCurrentPage);
           this.lastEmittedPage = this.internalCurrentPage;
@@ -406,6 +416,7 @@ export default {
         if (newVal !== undefined) {
           this.internalCurrentPage = newVal;
           if (oldVal !== newVal) {
+            // 更新对应的值
             this.$emit('update:currentPage', newVal);
           }
         } else {
