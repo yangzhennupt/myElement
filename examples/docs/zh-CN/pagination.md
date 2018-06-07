@@ -76,7 +76,8 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page.sync="currentPage1"
-      :page-size="100"
+      :page-size="10"
+      :isBuiness = "true"
       layout="total, prev, pager, next"
       :total="1000">
     </el-pagination>

@@ -54,7 +54,8 @@ export default {
 
     background: Boolean,
 
-    disabled: Boolean
+    disabled: Boolean,
+    isBusiness: Boolean
   },
 
   data() {
@@ -76,7 +77,7 @@ export default {
     const TEMPLATE_MAP = {
       prev: <prev></prev>,
       jumper: <jumper></jumper>,
-      pager: <pager currentPage={ this.internalCurrentPage } pageCount={ this.internalPageCount } pagerCount={ this.pagerCount } on-change={ this.handleCurrentChange } disabled={ this.disabled }></pager>,
+      pager: <pager isBusiness={this.isBusiness} currentPage={ this.internalCurrentPage } pageCount={ this.internalPageCount } pagerCount={ this.pagerCount } on-change={ this.handleCurrentChange } disabled={ this.disabled }></pager>,
       next: <next></next>,
       sizes: <sizes pageSizes={ this.pageSizes }></sizes>,
       slot: <my-slot></my-slot>,
@@ -385,7 +386,6 @@ export default {
       return null;
     }
   },
-
   watch: {
     currentPage: {
       immediate: true,

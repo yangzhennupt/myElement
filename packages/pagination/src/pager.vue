@@ -26,7 +26,7 @@
     <li
       :class="{ active: currentPage === pageCount, disabled }"
       class="number"
-      v-if="pageCount > 1">{{ pageCount }}</li>
+      v-if="pageCount > 1" v-show="showFlag">{{ pageCount }}</li>
   </ul>
 </template>
 
@@ -41,7 +41,9 @@
 
       pagerCount: Number,
 
-      disabled: Boolean
+      disabled: Boolean,
+  
+      isBusiness: Boolean
     },
 
     watch: {
@@ -51,6 +53,12 @@
 
       showNextMore(val) {
         if (!val) this.quicknextIconClass = 'el-icon-more';
+      },
+      isBussiness: {
+        immediate: true,
+        handler(newVal, oldVal) {
+          console.log(newVal, oldVal);
+        }
       }
     },
 
@@ -101,6 +109,9 @@
     },
 
     computed: {
+      showFlag() {
+        return this.isBusiness && (this.pageCount - this.currentPage < this.pagerCount);
+      },
       pagers() {
         // 显示的页码按钮数量，必需是奇数
         const pagerCount = this.pagerCount;
@@ -144,13 +155,15 @@
             array.push(i);
           }
         }
-
+        console.log(array);
         this.showPrevMore = showPrevMore;
         this.showNextMore = showNextMore;
         return array;
       }
     },
-
+    created() {
+      console.log(this.pageCount);
+    },
     data() {
       return {
         current: null,
