@@ -12,6 +12,9 @@
       <slot name="label">{{label + form.labelSuffix}}</slot>
     </label>
     <div class="el-form-item__content" v-bind:style="contentStyle">
+      <!-- 
+        item插入位置
+      -->
       <slot></slot>
       <transition name="el-zoom-in-top">
         <div
